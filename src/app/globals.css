@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.banner-text {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 28px;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.banner-text-orange {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 28px;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: #f97316;
+  /* orange-400 */
+}
+
+.font-color-orange {
+  color: #f97316;
+}
+
+.banner-subtitle {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  font-style: semi-bold;
+  line-height: 24px;
+  text-align: center;
+  text-align: center;
+  vertical-align: middle;
+  color: #ffffff;
+}
+
+.banner-info-text {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+}
