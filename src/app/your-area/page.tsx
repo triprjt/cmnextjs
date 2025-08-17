@@ -1,18 +1,12 @@
 'use client'
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Select from 'react-select';
 
 interface ConstituencyInfoType {
   area_name: string;
   vidhayak_info: {
-    metadata: {
-      education: string;
-      net_worth: string;
-      criminal_cases: number;
-      attendance: string;
-      questions_asked: number;
-      funds_utilisation: string;
-    };
     name: string;
     image_url: string;
     age: number;
@@ -21,30 +15,80 @@ interface ConstituencyInfoType {
     party_name: string;
     party_icon_url: string;
     manifesto_link: string;
-  };
-  dept_info: Array<{
-    id: string;
-    dept_name: string;
-    work_info: string[];
-    survey_score: Array<{
+    manifestore_score: number;
+    metadata: {
+      education: string;
+      net_worth: string;
+      criminal_cases: number;
+      attendance: string;
+      questions_asked: number;
+      funds_utilisation: string;
+    };
+    survey_score: {
       question: string;
       yes_votes: number;
       no_votes: number;
-    }>;
-  }>;
-  other_candidates: Array<{
+      score: number;
+    }[];
+  };
+  dept_info: {
+    id: string;
+    dept_name: string;
+    work_info: string[];
+    average_score: number;
+    survey_score: {
+      question: string;
+      yes_votes: number;
+      no_votes: number;
+      score: number;
+    }[];
+  }[];
+  other_candidates: {
     id: number;
     candidate_name: string;
     candidate_image_url: string;
     candidate_party: string;
     vote_share: string;
+  }[];
+  latest_news: Array<{
+    title: string;
   }>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+interface constituencyListType {
+  _id: number;
+  area_name: string;
 }
 export default function YourAreaPage() {
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const constituency = searchParams.get('constituency');
   const [constituencyInfo, setConstituencyInfo] = useState<ConstituencyInfoType | null>(null);
   const [loading, setLoading] = useState(false);
+  const [constituencyButtonStates, setConstituencyButtonStates] = useState<{ [key: string]: 'yes' | 'no' }>({});
+  const [selectedConstituency, setSelectedConstituency] = useState<constituencyListType | null>(null);
+  const [constituencyAreaList, setConstituencyAreaList] = useState<constituencyListType[]>([]);
+  const [deptRatings, setDeptRatings] = useState<{ [key: string]: number }>({});
+
+  useEffect(() => {
+    const fetchConstituencyAreaList = async () => {
+      setLoading(true);
+
+      try {
+        const response = await fetch(`${backendUrl}/api/constituencies`);
+        const data = await response.json();
+        setConstituencyAreaList(data);
+      } catch (err) {
+        setError('Failed to load constituencies');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchConstituencyAreaList();
+  }, [])
 
   const [error, setError] = useState<string | null>(null);
   const partyIconMap = {
@@ -56,21 +100,167 @@ export default function YourAreaPage() {
     'BSP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
     'JDU': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
   }
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+  const handleConstituencySelect = async (constituency: constituencyListType) => {
+    setSelectedConstituency(constituency);
+    router.push(`/your-area?constituency=${constituency.area_name}`);
+  }
   useEffect(() => {
-    const fetchConstituencyInfo = async () => {
-      setLoading(true);
-      try {
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL;
-        const response = await fetch(`${backendUrl}/api/constituencies/${constituency}`);
-        setConstituencyInfo(await response.json());
-      } catch (err) {
-        setError('Failed to fetch constituency information');
-      } finally {
-        setLoading(false);
+    if (constituency) {
+      const fetchConstituencyInfo = async () => {
+        setLoading(true);
+        try {
+
+          const response = await fetch(`${backendUrl}/api/constituencies/${constituency}`);
+          setConstituencyInfo(await response.json());
+        } catch (err) {
+          setError('Failed to fetch constituency information');
+        } finally {
+          setLoading(false);
+        }
       }
+      fetchConstituencyInfo();
     }
-    fetchConstituencyInfo();
   }, [constituency]);
+
+  if (!constituency) {
+    return (
+      <div className="h-[90vh] bg-[#939cab] flex flex-col items-center my-auto align-middle justify-center">
+        <div className="mb-8 max-w-md mx-auto">
+          <Select
+            placeholder="अपना निर्वाचन क्षेत्र खोजें..."
+            value={selectedConstituency ? {
+              value: selectedConstituency._id,
+              label: selectedConstituency.area_name
+            } : null}
+            onChange={(option) => {
+              if (option) {
+                const constituency = constituencyAreaList.find(c => c._id === option.value);
+                console.log('constituency123 ', constituency, 'option123 ', option);
+                if (constituency) {
+                  handleConstituencySelect(constituency);
+                }
+              }
+            }}
+            onMenuClose={() => {
+              setSelectedConstituency(null);
+            }}
+            onMenuOpen={() => {
+              setSelectedConstituency(null);
+            }}
+            options={constituencyAreaList.map(constituency => ({
+              value: constituency._id,
+              label: constituency.area_name
+            }))}
+            isSearchable={true}
+            isClearable={true}
+            className="text-gray-800"
+            instanceId="constituency-select"
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                backgroundColor: '#e5e7eb',
+                border: 'none',
+                borderRadius: '0.5rem',
+                padding: '0.75rem',
+                minHeight: 'auto'
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: '#6b7280'
+              }),
+              input: (provided) => ({
+                ...provided,
+                color: '#1f2937'
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isSelected ? '#273F4F' : state.isFocused ? '#f3f4f6' : 'white',
+                color: state.isSelected ? 'white' : '#1f2937',
+                '&:hover': {
+                  backgroundColor: state.isSelected ? '#273F4F' : '#f3f4f6'
+                }
+              }),
+              menu: (provided) => ({
+                ...provided,
+                zIndex: 50
+              })
+            }}
+          />
+        </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center max-w-md mx-4">
+          <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-[#273F4F] mb-2">कृपया निर्वाचन क्षेत्र चुनें</h2>
+          <p className="text-gray-600 mb-4">देखने के लिए किसी निर्वाचन क्षेत्र का चयन करें</p>
+          <button
+            onClick={() => router.push('/')}
+            className="bg-[#273F4F] text-white px-6 py-2 rounded-lg hover:bg-[#1e2f3a] transition-colors"
+          >
+            होम पेज पर जाएं
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+  async function handlePollSubmit(constituencyAreaName: string, poll_category: string = 'vidhayak', poll_response: string, question_id: number, dept_id?: string) {
+    try {
+
+      setConstituencyButtonStates(prev => ({
+        ...prev,
+        [constituencyAreaName]: poll_response as 'yes' | 'no'
+      }));
+      const response = await fetch(`${backendUrl}/api/constituencies/poll/${constituencyAreaName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',  // Add this header
+        },
+        body: JSON.stringify({
+          poll_response: poll_response,
+          poll_category: poll_category,
+          question_id: question_id,
+          dept_id: dept_id
+        })
+      })
+      const data = await response.json();
+    }
+    catch (err) {
+      console.error('Failed to submit poll:', err);
+    }
+    finally {
+      console.log('Poll submitted successfully');
+    }
+  }
+  const handleStarRatingPoll = async (deptId: string, rating: number) => {
+    setDeptRatings(prev => ({
+      ...prev,
+      [deptId]: rating
+    }));
+    try {
+      const response = await fetch(`${backendUrl}/api/constituencies/poll/${constituency}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          poll_response: rating.toString(),
+          poll_category: 'dept',
+          question_id: 0,
+          dept_id: deptId
+        })
+      });
+
+      const data = await response.json();
+      console.log('Star rating poll submitted successfully');
+    } catch (err) {
+      console.error('Failed to submit star rating poll:', err);
+    }
+  };
   console.log(constituency);
   if (loading) {
     return (
@@ -82,55 +272,183 @@ export default function YourAreaPage() {
       </div>
     );
   }
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500">Not able to get data due to {error} </p>
+        </div>
+      </div>
+    );
+  }
+  // Add these variables to get button states for this constituency
+  const isYesSelected = constituencyButtonStates[constituencyInfo?.area_name || ''] === 'yes';
+  const isNoSelected = constituencyButtonStates[constituencyInfo?.area_name || ''] === 'no';
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#939cab]">
 
       {/* Main content */}
       <main className="px-4 py-6">
         <div className="space-y-6">
+          <div className="mb-8 max-w-md mx-auto">
+            <Select
+              placeholder="अपना निर्वाचन क्षेत्र खोजें..."
+              value={selectedConstituency ? {
+                value: selectedConstituency._id,
+                label: selectedConstituency.area_name
+              } : null}
+              onChange={(option) => {
+                if (option) {
+                  const constituency = constituencyAreaList.find(c => c._id === option.value);
+                  console.log('constituency123 ', constituency, 'option123 ', option);
+                  if (constituency) {
+                    handleConstituencySelect(constituency);
+                  }
+                }
+              }}
+              onMenuClose={() => {
+                setSelectedConstituency(null);
+              }}
+              onMenuOpen={() => {
+                setSelectedConstituency(null);
+              }}
+              options={constituencyAreaList.map(constituency => ({
+                value: constituency._id,
+                label: constituency.area_name
+              }))}
+              isSearchable={true}
+              isClearable={true}
+              className="text-gray-800"
+              instanceId="constituency-select"
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  backgroundColor: '#e5e7eb',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem',
+                  minHeight: 'auto'
+                }),
+                placeholder: (provided) => ({
+                  ...provided,
+                  color: '#6b7280'
+                }),
+                input: (provided) => ({
+                  ...provided,
+                  color: '#1f2937'
+                }),
+                option: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isSelected ? '#273F4F' : state.isFocused ? '#f3f4f6' : 'white',
+                  color: state.isSelected ? 'white' : '#1f2937',
+                  '&:hover': {
+                    backgroundColor: state.isSelected ? '#273F4F' : '#f3f4f6'
+                  }
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  zIndex: 50
+                })
+              }}
+            />
+          </div>
           {/* Constituency Information */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h1 className="text-2xl font-bold text-[#273F4F] mb-2">{constituencyInfo?.area_name}</h1>
-            <p className="text-gray-600 mb-6">आपके क्षेत्र की जानकारी</p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+            <p className=" mb-2 candidate-profile-main-heading-area-name">{constituencyInfo?.area_name}</p>
+            <p className="text-gray-600">आपके क्षेत्र की जानकारी</p>
+          </div>
 
-            {/* Candidate Profile Card */}
-            <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
-                  <img src={constituencyInfo?.vidhayak_info.image_url} alt={constituencyInfo?.vidhayak_info.name} className="w-full h-full rounded-full" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-[#273F4F]">{constituencyInfo?.vidhayak_info.name}</h3>
-                  <p className="text-sm text-gray-600">उम्र: {constituencyInfo?.vidhayak_info.age} वर्ष</p>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <div className="w-5 h-5 bg-red-500 rounded flex items-center justify-center">
-                      {/* <span className="text-white text-xs">R</span> */}
-                      <img src={constituencyInfo?.vidhayak_info.party_icon_url} alt={constituencyInfo?.vidhayak_info.party_name} className="w-8 h-8 rounded-full" />
-                    </div>
-                    <span className="text-sm text-gray-600">{constituencyInfo?.vidhayak_info.party_name}</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-1">अंतिम चुनाव: {constituencyInfo?.vidhayak_info.last_election_vote_percentage} वोट</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <button className="bg-[#273F4F] text-white px-4 py-2 rounded-lg text-sm font-medium mb-2">
-                  विधायक
-                </button>
-                <p className="text-sm text-gray-600">{constituencyInfo?.vidhayak_info.experience} वर्ष पद अनुभव</p>
+          <div className="mb-4 relative flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 p-6 items-start space-x-3">
+            {/* Profile Picture */}
+            <div className="absolute top-1 right-1 bg-[#D3DADF] px-3 py-1 rounded-full">
+              <div className="text-center">
+                <div className="candidate-profile-vidhayak-text">विधायक</div>
               </div>
             </div>
+            <div className="flex items-center space-x-3">
+              <img
+                src={constituencyInfo?.vidhayak_info.image_url}
+                alt={constituencyInfo?.vidhayak_info.name}
+                className="w-16 h-16 rounded-full border-2 border-gray-300 object-cover"
+              />
+              {/* Candidate Info */}
+              <div className="flex-1">
+                <div className="mb-1 candidate-profile-heading">
+                  {constituencyInfo?.vidhayak_info.name}
+                </div>
+                <div className="text-xl font-bold candidate-profile-subheading ">
+                  उम्र: {constituencyInfo?.vidhayak_info.age} वर्ष
+                </div>
+
+                {/* Party Button */}
+                <div className="flex items-center space-x-2 mb-2">
+                  <button className="bg-[#008040] text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {constituencyInfo?.vidhayak_info.party_name}
+                  </button>
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center ml-26 ">
+                    <img
+                      src={constituencyInfo?.vidhayak_info.party_icon_url}
+                      alt={constituencyInfo?.vidhayak_info.party_name}
+                      className="w-6 h-6 rounded object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between w-full">
+              <p className=" mt-1 bg-[#E2EBF3] my-auto rounded-lg px-3 py-1 candidate-profile-subheading-text-last-election">अंतिम चुनाव: {constituencyInfo?.vidhayak_info.last_election_vote_percentage} वोट</p>
+              <div className="flex flex-col items-center">
+                <p className="text-sm text-gray-600">{constituencyInfo?.vidhayak_info.experience} वर्ष </p>
+                <p className="candidate-profile-subheading-text-experience">पद अनुभव</p>
+              </div>
+
+            </div>
+
           </div>
 
           {/* Public Satisfaction Poll */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-[#273F4F] mb-4">क्या आप पिछले पांच साल के कार्यकाल से खुश हैं?</h3>
-            <div className="flex space-x-4 mb-4">
-              <button className="bg-green-500 text-white px-6 py-2 rounded-lg font-medium">हां</button>
-              <button className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium">ना</button>
+          <div className="mb-4 relative flex flex-col bg-white rounded-lg shadow-sm border border-gray-200 p-6 items-start space-x-3">
+            <div className="text-sm text-gray-600 mb-3 text-center  mx-auto">
+              {constituencyInfo?.vidhayak_info.survey_score && constituencyInfo?.vidhayak_info.survey_score.length > 0
+                ? constituencyInfo?.vidhayak_info.survey_score[0].question
+                : 'क्या आप पिछले पाँच साल के कार्यकाल से संतुष्ट है?'}
             </div>
-            <div className="text-center">
-              <p className="text-sm text-gray-600 mb-1">जनता की संतुष्टि</p>
-              <p className="text-2xl font-bold text-[#273F4F]">67%</p>
+
+            <div className="flex items-center justify-between w-full">
+              {/* Response Buttons */}
+              <div className="flex bg-white w-[75px] h-[40px] pt-[3px] pb-[10px] pr-[6px] pl-[3px] rounded-full shadow-xl gap-0">
+                <button
+                  className={`text-center w-[30px]  h-[34px] pl-[10px] pr-[10px] rounded-full text-sm font-medium mx-auto transition-colors ${isYesSelected
+                    ? 'bg-[#004030] text-white'
+                    : 'bg-white text-[#026A00]'
+                    }`}
+                  onClick={() => constituencyInfo?.area_name && handlePollSubmit(constituencyInfo.area_name, 'vidhayak', 'yes', 0)}
+                >
+                  हाँ
+                </button>
+                <button
+                  className={`text-center w-[30px] h-[34px] rounded-full text-sm pr-[9px] pl-[3px] font-medium transition-colors ${isNoSelected
+                    ? 'bg-[#CA3C26] text-white'
+                    : 'bg-white text-[#026A00]'
+                    }`}
+                  onClick={() => constituencyInfo?.area_name && handlePollSubmit(constituencyInfo.area_name, 'vidhayak', 'no', 0)}
+                >
+                  ना
+                </button>
+              </div>
+
+              {/* Satisfaction Percentage */}
+              {isYesSelected || isNoSelected ? <div className="text-2xl font-bold text-green-600 candidate-profile-percentage-text flex flex-col">
+                <span className="candidate-profile-percentage-text-subheading text-center my-1">जनता की संतुष्टि</span>
+                <span className="text-center">
+                  {constituencyInfo?.vidhayak_info.survey_score && constituencyInfo?.vidhayak_info.survey_score.length > 0
+                    ? `${constituencyInfo?.vidhayak_info.survey_score[0].score}%`
+                    : '78%'}
+                </span>
+
+              </div> : null}
             </div>
           </div>
 
@@ -220,9 +538,8 @@ export default function YourAreaPage() {
                 }
               };
 
-              const iconInfo = iconMap[dept.dept_name] || { icon: '', bgColor: 'bg-gray-100', iconColor: 'text-gray-600' };
-              const satisfactionPercentage = dept.survey_score[0] ?
-                Math.round((dept.survey_score[0].yes_votes / (dept.survey_score[0].yes_votes + dept.survey_score[0].no_votes)) * 100) : 0;
+              const iconInfo = iconMap[dept.dept_name] || { icon: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z', bgColor: 'bg-gray-100', iconColor: 'text-gray-600' };
+              const satisfactionPercentage = dept.survey_score[0].score 
 
               return (
                 <div key={dept.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -239,19 +556,49 @@ export default function YourAreaPage() {
                       <p key={index} className="text-sm text-gray-600">• {work}</p>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 mb-3">{dept.survey_score[0]?.question}</p>
+                  <p className="text-sm text-gray-600 mb-2">{dept.survey_score[0]?.question}</p>
+                  {/* call handlePollSubmit when user clicks on the stars*/}
                   <div className="flex items-center space-x-1 mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <svg key={star} className={`w-5 h-5 ${star <= 3.5 ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
+                      <button
+                        key={star}
+                        onClick={() => handleStarRatingPoll(dept.id, star)}
+                        className="hover:scale-110 transition-transform cursor-pointer"
+                      >
+                        <svg
+                          className={`w-5 h-5 ${star <= (deptRatings[dept.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                          
+                        >
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      </button>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{satisfactionPercentage}% लोग इस विषय से संतुष्ट हैं</p>
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>बहुत खराब</span>
-                    <span>बहुत अच्छा</span>
+                  <div className="flex justify-between rounded-lg gap-10">
+                    <div className="flex gap-1">
+                      <p className="text-sm text-gray-600 mb-2 my-auto align-middle">{satisfactionPercentage}% </p>
+                      <span className=" text-gray-400 candidate-profile-subheading-text-satisfaction-percentage align-middle my-auto">लोग इस विषय से संतुष्ट हैं</span>
+                    </div>
+
+                    <div className="flex justify-between text-xs text-gray-500 flex flex-col">
+                      <div className="flex gap-2">
+                        <span className="candidate-profile-subheading-text-satisfaction-percentage-verygood">बहुत खराब</span>
+                        <svg key={'star'} className={`w-2 h-2 text-yellow-400 my-auto`} fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg></div>
+                      <div className="flex gap-2">
+                        <span className="candidate-profile-subheading-text-satisfaction-percentage-verygood w-full">बहुत अच्छा</span>
+                        <div className="flex align-middle my-auto">{[1, 2, 3, 4, 5].map((star) => (
+                          <svg key={star} className={`w-2 h-2 text-yellow-400`} fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        ))}</div>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
               );
             })}
@@ -286,11 +633,11 @@ export default function YourAreaPage() {
           </div>
 
           {/* Bottom Call to Action */}
-          <div className="bg-gray-700 rounded-lg p-4 flex items-center justify-center space-x-3">
+          <div className="bg-gray-700 rounded-lg p-4 flex items-center justify-center space-x-3" onClick={() => router.push('/message')}>
             <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
             </svg>
-            <span className="text-white text-sm">15+ सक्रिय चर्चा • आपके क्षेत्र के चर्चा मंच पर जाएं</span>
+            <span className="text-white text-sm">आपके क्षेत्र के चर्चा मंच पर जाएं</span>
           </div>
         </div>
       </main>
