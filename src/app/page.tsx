@@ -1,6 +1,67 @@
+'use client'
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Select from 'react-select';
+
+interface constituencyListType {
+  _id: number;
+  area_name: string;
+}
 
 export default function HomePage() {
+
+  const router = useRouter();
+  const [constituencyList, setConstituencyList] = useState<constituencyListType[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState("");
+  const [selectedConstituency, setSelectedConstituency] = useState<constituencyListType | null>(null);
+  const [loading, setLoading] = useState(false);
+  console.log('process.env.BACKEND_BASE_URL ', process.env.NEXT_PUBLIC_API_URL);
+
+  useEffect(() => {
+    const fetchConstituency = async () => {
+      setLoading(true);
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      try {
+        const response = await fetch(`${backendUrl}/api/constituencies`);
+        const data = await response.json();
+        setConstituencyList(data);
+      } catch (err) {
+        setError('Failed to load constituencies');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchConstituency();
+  }, []);
+  const filteredConstituencies = constituencyList.filter(constituency =>
+    constituency.area_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const handleConstituencySelect = async (constituency: constituencyListType) => {
+    setSelectedConstituency(constituency);
+    setSearchQuery(constituency.area_name);
+    
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+      // Fetch constituency info first
+      const response = await fetch(`${backendUrl}/api/constituencies/${encodeURIComponent(constituency.area_name)}`);
+      
+      const data = await response.json();
+      console.log('Selected constituency:', constituency.area_name);
+      console.log('Fetched data:', data);
+      
+      // Navigate to your-area page with the selected constituency
+      router.push(`/your-area?constituency=${encodeURIComponent(constituency.area_name)}`);
+    } catch (err) {
+      console.error('Error:', err);
+      setError('Failed to fetch constituency information');
+    }
+  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Background circles with exact specs */}
@@ -40,20 +101,63 @@ export default function HomePage() {
         </div>
 
         {/* Search Bar */}
-        <div className="bg-gray-200 rounded-lg p-3 mb-8 flex items-center max-w-md mx-auto">
-          <svg className="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
+        <div className="mb-8 max-w-md mx-auto">
+          <Select
             placeholder="अपना निर्वाचन क्षेत्र खोजें..."
-            className="flex-1 bg-transparent text-gray-800 placeholder-gray-600 outline-none"
+            value={selectedConstituency ? {
+              value: selectedConstituency._id,
+              label: selectedConstituency.area_name
+            } : null}
+            onChange={(option) => {
+              if (option) {
+                const constituency = constituencyList.find(c => c._id === option.value);
+                console.log('constituency123 ', constituency, 'option123 ', option);
+                if (constituency) {
+                  handleConstituencySelect(constituency);
+                }
+              }
+            }}
+            options={constituencyList.map(constituency => ({
+              value: constituency._id,
+              label: constituency.area_name
+            }))}
+            isSearchable={true}
+            isClearable={true}
+            className="text-gray-800"
+            instanceId="constituency-select" 
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                backgroundColor: '#e5e7eb',
+                border: 'none',
+                borderRadius: '0.5rem',
+                padding: '0.75rem',
+                minHeight: 'auto'
+              }),
+              placeholder: (provided) => ({
+                ...provided,
+                color: '#6b7280'
+              }),
+              input: (provided) => ({
+                ...provided,
+                color: '#1f2937'
+              }),
+              option: (provided, state) => ({
+                ...provided,
+                backgroundColor: state.isSelected ? '#273F4F' : state.isFocused ? '#f3f4f6' : 'white',
+                color: state.isSelected ? 'white' : '#1f2937',
+                '&:hover': {
+                  backgroundColor: state.isSelected ? '#273F4F' : '#f3f4f6'
+                }
+              }),
+              menu: (provided) => ({
+                ...provided,
+                zIndex: 50
+              })
+            }}
           />
-          <svg className="w-5 h-5 text-gray-500 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
+        </div>      
+
 
         {/* Informational Bullet Points */}
         <div className="space-y-4 text-sm px-4">
