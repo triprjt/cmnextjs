@@ -110,6 +110,7 @@ function YourAreaPageContent() {
   
   const handleConstituencySelect = async (constituency: constituencyListType) => {
     setSelectedConstituency(constituency);
+    setConstituency(constituency.area_name);
     router.push(`/your-area?constituency=${constituency.area_name}`);
   }
   useEffect(() => {
