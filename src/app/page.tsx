@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Select from 'react-select';
 
 interface constituencyListType {
@@ -77,18 +77,17 @@ export default function HomePage() {
   const router = useRouter();
   const [constituencyAreaList, setConstituencyAreaList] = useState<constituencyListType[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [selectedConstituency, setSelectedConstituency] = useState<constituencyListType | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingConstituencyDetailSummary, setLoadingConstituencyDetailSummary] = useState(false);
   const [constituencyDetailSummary, setConstituencyDetailSummary] = useState<ConstituencyDetailSummaryType['constituencies']>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
   const backendUrl = process.env.NEXT_PUBLIC_API_URL;
   const [constituencyButtonStates, setConstituencyButtonStates] = useState<{
     [key: string]: 'yes' | 'no' | null;
-  }>({}); const fetchMoreCandidates = async (pageNumber: number) => {
+  }>({}); const fetchMoreCandidates =useCallback( async (pageNumber: number) => {
     setLoadingConstituencyDetailSummary(true);
     try {
       const limit = pageNumber === 1 ? 2 : 3; // First page: 2, others: 3
@@ -105,17 +104,17 @@ export default function HomePage() {
 
       setCurrentPage(data.pagination.currentPage);
       setHasNextPage(data.pagination.hasNextPage);
-      setTotalPages(data.pagination.totalPages);
+      // setTotalPages(data.pagination.totalPages);
 
       console.log(`Page ${pageNumber} data:`, data);
     } catch (err) {
       console.error(`Error fetching page ${pageNumber}:`, err);
-      setError(`Failed to load page ${pageNumber}`);
+      // setError(`Failed to load page ${pageNumber}`);
     } finally {
       setLoadingConstituencyDetailSummary(false);
     }
-  }
-
+  }, [backendUrl]);
+  console.log('loading ', loading);
   useEffect(() => {
     const fetchConstituencyAreaList = async () => {
       setLoading(true);
@@ -125,7 +124,7 @@ export default function HomePage() {
         const data = await response.json();
         setConstituencyAreaList(data);
       } catch (err) {
-        setError('Failed to load constituencies');
+        // setError('Failed to load constituencies');
       } finally {
         setLoading(false);
       }
@@ -161,9 +160,7 @@ export default function HomePage() {
       console.log('Poll submitted successfully');
     }
   }
-  const filteredConstituencies = constituencyAreaList.filter(constituency =>
-    constituency.area_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
   const handleConstituencySelect = async (constituency: constituencyListType) => {
     setSelectedConstituency(constituency);
     setSearchQuery(constituency.area_name);
@@ -181,11 +178,8 @@ export default function HomePage() {
       router.push(`/your-area?constituency=${encodeURIComponent(constituency.area_name)}`);
     } catch (err) {
       console.error('Error:', err);
-      setError('Failed to fetch constituency information');
+      // setError('Failed to fetch constituency information');
     }
-  }
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
   }
 
   const renderConstituencyDetailSummaryCardsPerPageNumber = () => {

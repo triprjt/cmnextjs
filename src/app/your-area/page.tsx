@@ -1,7 +1,6 @@
 'use client'
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Select from 'react-select';
 
 interface ConstituencyInfoType {
@@ -60,17 +59,25 @@ interface constituencyListType {
   _id: number;
   area_name: string;
 }
-export default function YourAreaPage() {
-  const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const constituency = searchParams.get('constituency');
+// Create a wrapper component that uses useSearchParams
+function YourAreaPageContent() {
+  const router = useRouter();
+  const [constituency, setConstituency] = useState<string | null>(null);
   const [constituencyInfo, setConstituencyInfo] = useState<ConstituencyInfoType | null>(null);
   const [loading, setLoading] = useState(false);
   const [constituencyButtonStates, setConstituencyButtonStates] = useState<{ [key: string]: 'yes' | 'no' }>({});
   const [selectedConstituency, setSelectedConstituency] = useState<constituencyListType | null>(null);
   const [constituencyAreaList, setConstituencyAreaList] = useState<constituencyListType[]>([]);
   const [deptRatings, setDeptRatings] = useState<{ [key: string]: number }>({});
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  // Get constituency from URL on client side
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const constituencyParam = urlParams.get('constituency');
+    setConstituency(constituencyParam);
+  }, []);
 
   useEffect(() => {
     const fetchConstituencyAreaList = async () => {
@@ -88,7 +95,7 @@ export default function YourAreaPage() {
     }
 
     fetchConstituencyAreaList();
-  }, [])
+  }, [backendUrl])
 
   const [error, setError] = useState<string | null>(null);
   const partyIconMap = {
@@ -100,7 +107,7 @@ export default function YourAreaPage() {
     'BSP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
     'JDU': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
   }
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   const handleConstituencySelect = async (constituency: constituencyListType) => {
     setSelectedConstituency(constituency);
     router.push(`/your-area?constituency=${constituency.area_name}`);
@@ -643,4 +650,20 @@ export default function YourAreaPage() {
       </main>
     </div>
   )
+}
+
+// Main component with Suspense boundary
+export default function YourAreaPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#939cab] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#273F4F] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <YourAreaPageContent />
+    </Suspense>
+  );
 }
