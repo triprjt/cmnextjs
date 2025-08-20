@@ -20,7 +20,7 @@ interface ConstituencyInfoType {
       net_worth: string;
       criminal_cases: number;
       attendance: string;
-      questions_asked: number;
+      questions_asked: string;
       funds_utilisation: string;
     };
     survey_score: {
@@ -107,7 +107,7 @@ function YourAreaPageContent() {
     'BSP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
     'JDU': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
   }
-  
+
   const handleConstituencySelect = async (constituency: constituencyListType) => {
     setSelectedConstituency(constituency);
     setConstituency(constituency.area_name);
@@ -547,7 +547,7 @@ function YourAreaPageContent() {
               };
 
               const iconInfo = iconMap[dept.dept_name] || { icon: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z', bgColor: 'bg-gray-100', iconColor: 'text-gray-600' };
-              const satisfactionPercentage = dept.survey_score[0].score 
+              const satisfactionPercentage = dept.survey_score[0].score
 
               return (
                 <div key={dept.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -560,9 +560,9 @@ function YourAreaPageContent() {
                     <h3 className="text-lg font-semibold text-[#273F4F]">{dept.dept_name}</h3>
                   </div>
                   <div className="space-y-2 mb-4">
-                    {dept.work_info.map((work, index) => (
-                      <p key={index} className="text-sm text-gray-600">• {work}</p>
-                    ))}
+                    {dept.work_info && Array.isArray(dept.work_info) ? (dept.work_info.length > 0 && dept.work_info.map((work, index) => (
+                      <p key={index} className="text-sm text-gray-600">{work}</p>
+                    ))) : <p className="text-sm text-gray-600">{dept.work_info}</p>}
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{dept.survey_score[0]?.question}</p>
                   {/* call handlePollSubmit when user clicks on the stars*/}
@@ -577,7 +577,7 @@ function YourAreaPageContent() {
                           className={`w-5 h-5 ${star <= (deptRatings[dept.id] || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                           fill="currentColor"
                           viewBox="0 0 24 24"
-                          
+
                         >
                           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                         </svg>
