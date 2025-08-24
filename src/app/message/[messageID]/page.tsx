@@ -97,7 +97,7 @@ export default function PostDetailPage() {
     if (error) {
         return (
             <div className="min-h-screen bg-[#F6F6F6] flex items-center justify-center p-4">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center max-w-md mx-4">
+                <div className="bg-[#f6f6f6] rounded-lg shadow-sm border border-gray-200 p-8 text-center max-w-md mx-4">
                     <h2 className="text-xl font-semibold text-red-600 mb-2">त्रुटि</h2>
                     <button
                         onClick={() => window.location.reload()}
@@ -180,7 +180,7 @@ export default function PostDetailPage() {
         <div className="min-h-screen bg-[#939cab] pb-20 mb-3"> {/* pb-20 for fixed nav bar */}
             <main className="p-4">
                 {/* Charcha Manch Banner */}
-                <div className="bg-white rounded-lg shadow-sm p-2 text-center mb-4">
+                <div className="bg-[#f6f6f6] rounded-lg shadow-sm p-2 text-center mb-4">
                     <p className="text-3xl font-bold text-[#273F4F] postsection-heading-text pt-2">चर्चा <span className="text-[#CA3C26]">मंच</span></p>
                     <p className=" postsection-subheading-text pt-2">संवाद और सामुदायिक सहयोग का मंच</p>
                 </div>
@@ -191,20 +191,31 @@ export default function PostDetailPage() {
                         <div className="text-center text-gray-600 py-8">कोई चर्चा नहीं मिली।</div>
                     ) : (
 
-                        <div key={postDetails._id} className="bg-white rounded-lg shadow-sm p-4">
-                            {/* Post Header */}
+                        <div key={postDetails._id} className="bg-[#f6f6f6] rounded-lg shadow-sm p-4">
+                                {/* Post Header */}
                             <CardComponentForPost post={postDetails as PostType} />
 
                             {/* Post Content */}
                             {/* <h3 className="text-lg font-bold text-[#273F4F] mb-2">{post.title}</h3> */}
                             {/* <p className="text-sm text-gray-700 mb-3">{post.description}</p> */}
-                            {postDetails.content && <p className=" mb-3 postsection-post-content-text">{postDetails.content}</p>}
-
+                            {postDetails.content && <p 
+                                    className="mb-3 px-2 postsection-post-content-text"
+                                    style={{
+                                    fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                    fontWeight: 400,
+                                    fontSize: '1rem',
+                                    lineHeight: '1.625rem',
+                                    letterSpacing: '0%',
+                                    verticalAlign: 'middle',
+                                    color: '#1D2530',
+                                    textAlign: 'justify'
+                                    }}
+                            >{postDetails.content}</p>}
                             {/* Tags */}
                             {postDetails.tags && postDetails.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mb-3">
+                                <div className="flex flex-wrap gap-0 mb-3">
                                     {postDetails.tags.map((tag, index) => (
-                                        <span key={index} className=" px-2 py-1 rounded-full postsection-tag-text">
+                                        <span key={index} className="px-2 py-1 rounded-full postsection-tag-text">
                                             #{tag}
                                         </span>
                                     ))}
@@ -212,7 +223,7 @@ export default function PostDetailPage() {
                             )}
 
                             {/* Interaction Buttons */}
-                            <div className="flex items-center justify-between text-gray-600 text-sm pt-3">
+                            <div className="flex items-center justify-between text-gray-600 text-sm pt-3 px-2">
                                 <div className="flex items-center space-x-4 gap-2">
                                     <div className="flex items-center space-x-1">
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
@@ -223,25 +234,25 @@ export default function PostDetailPage() {
                                         <span>{postDetails.dislike.length}</span> {/* Assuming a dislike count */}
                                     </div>
                                     {/* <div className="flex items-center space-x-1">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>
-                      <span>{post.commentCount}</span>
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg>
+                    <span>{post.commentCount}</span>
                     </div> */}
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <button className="flex items-center space-x-1 text-gray-600 hover:text-[#273F4F]">
+                                    {/* <button className="flex items-center space-x-1 text-gray-600 hover:text-[#273F4F]">
                                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.52.47 1.2.77 1.96.77 2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4c0 .24.04.47.09.7L7.1 11.23c-.52-.47-1.2-.77-1.96-.77-2.21 0-4 1.79-4 4s1.79 4 4 4c.76 0 1.44-.3 1.96-.77l7.05 4.11c-.05.23-.09.46-.09.7 0 2.21 1.79 4 4 4s4-1.79 4-4-1.79-4-4-4z" /></svg>
                                         <span>साझा</span>
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
 
                             {/* Comment Section */}
-                            <div className="mt-4 pt-4 space-y-3">
+                            <div className="pt-4 space-y-3">
                                 {/* Write a comment */}
-                                <div className="flex flex-col items-center space-x-2 w-full gap-2">
-                                    <textarea // This is your input area
+                                <div className="flex flex-col items-center w-full px-2 gap-2">
+                                    <textarea
                                         placeholder="अपनी टिप्पणी लिखें..."
-                                        className={`flex-1 p-2 border rounded-md w-full h-[120px] text-sm focus:outline-none focus:ring-1 focus:ring-[#273F4F] ${error ? 'border-red-500 shake-effect' : 'border-gray-200'}`}
+                                        className={`flex-1 p-2 border rounded-md w-full h-[120px] text-sm focus:outline-none focus:ring-1 focus:ring-[#273F4F] bg-[#F8FAFB] ${error ? 'border-red-500 shake-effect' : 'border-gray-200'}`}
                                         value={commentInputs}
                                         onChange={(e) => handleCommentInputChange(e)}
                                         onKeyDown={(e) => {
@@ -251,16 +262,15 @@ export default function PostDetailPage() {
                                             }
                                         }}
                                     />
-                                    <div className="w-full flex justify-items-start">
+                                    <div className="w-full flex justify-items-start mt-1">
                                         <button
-                                            className="bg-[#273F4F] text-white px-4 py-1 rounded-md w-fit flex items-center gap-2"
-                                            onClick={() => handleCommentSubmit(postDetails._id)} // Simplified for example
+                                            className="bg-[#273F4F] text-white px-4 py-2 rounded-md w-fit flex items-center gap-2 item-center hover:bg-[#1e2f3a] transition-colors disabled:opacity-50"
+                                            onClick={() => handleCommentSubmit(postDetails._id)}
                                         >
                                             {loadingCommentButton && <LoadingSpinner />}
                                             <span className="postsection-comment-button">{'टिप्पणी करें'}</span>
                                         </button>
                                     </div>
-
                                 </div>
 
                                 {/* Existing Comments */}
@@ -278,7 +288,19 @@ export default function PostDetailPage() {
                                                             <span className="postsection-constituency-area-text">• नई दिल्ली</span>
                                                             <span className="postsection-constituency-area-text">• {timeAgo(comment.createdAt)}</span>
                                                         </div>
-                                                        <p className="postsection-comment-content-text">{comment.content}</p>
+                                                        <p 
+                                                            className="postsection-comment-content-text mb-1"
+                                                            style={{
+                                                                overflowWrap: 'break-word',
+                                                                wordWrap: 'break-word',
+                                                                whiteSpace: 'pre-wrap',
+                                                                maxWidth: '100%',
+                                                                textAlign: 'justify',
+                                                                fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                                                fontSize: '1rem',
+                                                                lineHeight: '1.625rem'
+                                                            }}
+                                                        >{comment.content}</p>
                                                         <div className="flex items-center space-x-4 gap-2">
                                                             <div className="flex items-center space-x-1">
                                                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
@@ -301,6 +323,7 @@ export default function PostDetailPage() {
                                     </div>
                                 )}
                             </div>
+                        
                         </div>
 
                     )}

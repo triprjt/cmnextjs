@@ -10,20 +10,19 @@ export const CardComponentForPost = ({ post }: { post: PostType }) => {
         )
       }
     return (
-      <div className="bg-white rounded-lg flex justify-between items-center">
-        <div className="flex gap-2">
+      <div className="bg-[#f6f6f6] rounded-lg px-2 py-2 relative mb-4">
+        <div className="flex gap-3">
           <div className="w-10 h-10 rounded-full bg-[#F0F2F4] flex items-center"><img src="/userpicturesalhuoette.svg" alt="user" className="w-5 h-5 mx-auto my-auto" /></div>
           <div className="flex flex-col items-start">
-            <span className=" postsection-author-name-text ">{post.author.name}</span>
-            <span className="text-xs text-gray-500 postsection-author-time-text">{timeAgo(post.createdAt)}</span>
+            <span className="text-sm font-medium leading-5 text-[#1D2530] font-['Noto Sans Devanagari, sans-serif'] align-middle tracking-[0%] py-1">{post.author.name}</span>
+            <span className="text-xs text-[#7B899D] font-medium font-['Noto Sans Devanagari, sans-serif'] postsection-author-time-text">{timeAgo(post.createdAt)}</span>
           </div>
-          {post.constituency && <span className="postsection-constituency-area-text">• {post.constituency.area_name}</span>}
-          <div className="bg-[#176DCF0D] rounded-[4px] border-l-4 postsection-category-text border-[#273F4F] h-fit px-1 ">
-            <span className="my-auto">{post.category.name}</span>
+          {post.constituency && <span className="text-xs font-medium text-[#7B899D] font-['Noto Sans Devanagari, sans-serif'] px-3 py-2 postsection-constituency-area-text">• {post.constituency.area_name}</span>}
+          <div className="absolute -top-4 -right-4 bg-[#D3DADF] rounded-lg border border-[#A5B8C7] flex items-center justify-center px-2 whitespace-nowrap py-1">
+            <span className="text-[#176DCF] text-sm font-normal leading-4 font-['Noto_Sans_Devanagari'] block">{post.category.name}</span>
           </div>
+          {/* <button className="absolute right-0 flex py-0"><img src='postsectionbutton.svg' className="w-10 h-10" alt="section button" /></button> */}
         </div>
-        <button className="flex"><img src='postsectionbutton.svg'></img></button>
-
       </div>
     );
   };
