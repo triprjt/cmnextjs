@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Select from 'react-select';
+import Footer from "@/components/Footer";
 
 interface constituencyListType {
   _id: number;
@@ -72,7 +73,8 @@ interface ConstituencyDetailSummaryType {
     limit: number;
   };
 }
-export default function HomePage() {
+
+export default function Home() {
 
   const router = useRouter();
   const [constituencyAreaList, setConstituencyAreaList] = useState<constituencyListType[]>([]);
@@ -580,6 +582,7 @@ export default function HomePage() {
         </div>
     </div>
 
+    <Footer />
     </div >
   )
 }
