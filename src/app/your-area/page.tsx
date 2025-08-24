@@ -1,5 +1,6 @@
 'use client'
 import { useRouter } from "next/navigation";
+import Footer from "@/components/Footer";
 import { useEffect, useState, Suspense } from "react";
 import Select from 'react-select';
 
@@ -295,8 +296,7 @@ function YourAreaPageContent() {
   const isNoSelected = constituencyButtonStates[constituencyInfo?.area_name || ''] === 'no';
 
   return (
-    <div className="min-h-screen bg-[#c1cbd1]">
-
+    <div className="bg-[#c1cbd1]">
       {/* Main content */}
       <main className="px-4 py-2.5">
         <div className="space-y-2.5">
@@ -837,15 +837,20 @@ function YourAreaPageContent() {
 // Main component with Suspense boundary
 export default function YourAreaPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#c1cbd1] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#273F4F] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
+    <div className="min-h-screen bg-[#c1cbd1] flex flex-col">
+      <div className="flex-grow">
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#273F4F] mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        }>
+          <YourAreaPageContent />
+        </Suspense>
       </div>
-    }>
-      <YourAreaPageContent />
-    </Suspense>
+      <Footer />
+    </div>
   );
 }
