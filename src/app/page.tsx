@@ -87,7 +87,9 @@ export default function HomePage() {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL;
   const [constituencyButtonStates, setConstituencyButtonStates] = useState<{
     [key: string]: 'yes' | 'no' | null;
-  }>({}); const fetchMoreCandidates =useCallback( async (pageNumber: number) => {
+  }>({});
+  
+  const fetchMoreCandidates =useCallback( async (pageNumber: number) => {
     setLoadingConstituencyDetailSummary(true);
     try {
       const limit = pageNumber === 1 ? 2 : 3; // First page: 2, others: 3
@@ -189,7 +191,7 @@ export default function HomePage() {
           const isYesSelected = constituencyButtonStates[constituency.area_name] === 'yes';
           const isNoSelected = constituencyButtonStates[constituency.area_name] === 'no';
 
-          return (
+  return (
             <div key={`${constituency.area_name}-${index}`} className="bg-white rounded-lg p-4 px-6 shadow-sm border border-gray-200 relative">
               {/* Active Discussion Tag - Top Right */}
               <div className="absolute top-2 right-2 bg-[#DEAF13] px-3 py-1 rounded-full">
@@ -576,7 +578,7 @@ export default function HomePage() {
             </svg>
           </button>
         </div>
-      </div>
+    </div>
 
     </div >
   )

@@ -504,7 +504,7 @@ function YourAreaPageContent() {
 
               const iconInfo = iconMap[key];
               const value = constituencyInfo.vidhayak_info.metadata[key as keyof typeof constituencyInfo.vidhayak_info.metadata];
-
+              
               return (
                 <div key={key} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center">
                   <div className={`w-12 h-12 ${iconInfo.bgColor} rounded-lg mx-auto mb-3 flex items-center justify-center`}>
