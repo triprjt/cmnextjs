@@ -352,28 +352,110 @@ export default function HomePage() {
 
 
       {/* Main Banner Area */}
-      <div className="bg-[#273F4F] px-4 py-6 text-white relative overflow-visible h-[90vh]">
-        {/* Background Circles */}
-        <div className="absolute w-[80px] h-[80px] top-[40px] left-[40px] z-10 border-2 border-[#FFFFFF] rounded-full opacity-10"></div>
-        <div className="absolute w-[64px] h-[64px] top-[128px] left-[244px] z-10 border-2 border-[#FFFFFF] rounded-full opacity-10"></div>
-        <div className="absolute w-[48px] h-[48px] top-[439px] left-[97.5px] z-10 border-2 border-[#FFFFFF] rounded-full opacity-10"></div>
+      <div className="bg-[#273F4F] px-4 py-6 text-white relative overflow-visible" style={{height: 'calc(90vh - 70px)'}}>
+        {/* Existing assets */}
+        <Image
+          src="/home_assets/IMG_5509.PNG"
+          alt="Circle Asset"
+          width={140}
+          height={140}
+          style={{
+            position: 'absolute',
+            top: 40,
+            left: 15,
+            zIndex: 10,
+          }}
+          priority
+        />
+        <Image
+          src="/home_assets/IMG_5509.PNG"
+          alt="Circle Asset"
+          width={124}
+          height={124}
+          style={{
+            position: 'absolute',
+            top: 122,
+            right: 35,
+            zIndex: 10,
+          }}
+          priority
+        />
+        <Image
+          src="/home_assets/IMG_5509.PNG"
+          alt="Circle Asset"
+          width={108}
+          height={108}
+          style={{
+            position: 'absolute',
+            //top: 479, // 439 + 40
+            left: 97.5,
+            zIndex: 10,
+            bottom:135
+          }}
+          priority
+        />
+        {/* Place asset at bottom right of blue container */}
+        <Image
+          src="/home_assets/IMG_5510.PNG"
+          alt="Bottom Right Asset"
+          width={140}
+          height={190}
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            zIndex: 20,
+            // opacity: 0.5,
+            // backgroundColor: '#FFFFFF',
+          }}
+          priority
+        />
 
         {/* Main Title Text - Centered */}
-        <div className=" pt-6 ml-20 ">
-          <h2 className="banner-text mb-1">
+        <div className="pt-6 ml-30" style={{ position: 'relative', zIndex: 20}}>
+          <h2
+            className="banner-text mb-1.5"
+            style={{ fontSize: '2.7rem' }} // Increased font size
+          >
             जनता का
           </h2>
-          <h2 className="banner-text">
+          <h2
+            className="banner-text"
+            style={{ fontSize: '2.7rem'}} // Increased font size
+          >
             चुनावी <span className="font-color-orange">साथी</span>
           </h2>
         </div>
 
         {/* Subtitle Text - Centered */}
-        <div className="text-center mb-8 w-fit pt-2 mt-4 pl-6 ml-4">
-          <p className="banner-subtitle mb-2">
+        <div
+          className="mb-8 w-fit pt-2 mt-4"
+          style={{
+            position: 'relative',
+            left: 20, // 30px from the left
+            top: 10
+          }}
+        >
+          <p
+            className="banner-subtitle mb-2"
+            style={{
+              fontWeight: 600,
+              fontSize: '20px',
+              lineHeight: '20px',
+              fontFamily: 'inherit',
+            }}
+          >
             किसने किया है कैसा काम
           </p>
-          <p className="banner-subtitle">
+          <p
+            className="banner-subtitle"
+            style={{
+              fontWeight: 600,
+              fontSize: '20px',
+              lineHeight: '20px',
+              fontFamily: 'inherit',
+            }}
+          >
             आओ करें चर्चाग्राम
           </p>
         </div>
@@ -440,21 +522,129 @@ export default function HomePage() {
         {/* Informational Bullet Points */}
         <div className="space-y-4 text-sm px-4">
           <div className="flex items-start">
-            <span className="banner-info-text mr-3 font-bold">जानें</span>
-            <span className="banner-info-text">– उम्मीदवारों की संपत्ति, आपराधिक मामले और संसद में भागीदारी</span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+               // fontStyle: 'italic',
+                lineHeight: '32px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              जानें
+            </span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                //fontStyle: 'italic',
+                lineHeight: '32px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              –
+            </span>
+            <span
+              className="banner-info-text"
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+              }}
+            >
+              उम्मीदवारों की संपत्ति, आपराधिक मामले और संसद में भागीदारी
+            </span>
           </div>
           <div className="flex items-start">
-            <span className="banner-info-text mr-3 font-bold">रखें</span>
-            <span className="banner-info-text">– वर्तमान और पूर्व उम्मीदवारों पर अपनी राय</span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              रखें
+            </span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              –
+            </span>
+            <span
+              className="banner-info-text"
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+              }}
+            >
+              वर्तमान और पूर्व उम्मीदवारों पर अपनी राय
+            </span>
           </div>
           <div className="flex items-start">
-            <span className="banner-info-text mr-3 font-bold">करें</span>
-            <span className="banner-info-text">– जनसंवाद, सवाल-जवाब और जवाबदेही तय</span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              करें
+            </span>
+            <span
+              className="banner-info-text font-bold"
+              style={{
+                fontSize: '18px',
+                fontWeight: 800,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+                marginRight: '8px',
+              }}
+            >
+              –
+            </span>
+            <span
+              className="banner-info-text"
+              style={{
+                fontSize: '12px',
+                fontWeight: 700,
+                //fontStyle: 'italic',
+                lineHeight: '22px',
+                //boxShadow: '0px 5px 4px 0px #00000040',
+              }}
+            >
+              जनसंवाद, सवाल-जवाब और जवाबदेही तय
+            </span>
           </div>
         </div>
       </div>
 
-
+    
       {/* Your Citizen Contribution Section */}
       {/* <div className="bg-gray-100 px-4 py-6">
         <h3 className="text-lg font-semibold text-[#273F4F] mb-2">आपका नागरिक योगदान</h3>
@@ -573,11 +763,10 @@ export default function HomePage() {
             </span>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            </svg>l̥
           </button>
         </div>
       </div>
-
     </div >
   )
 }
