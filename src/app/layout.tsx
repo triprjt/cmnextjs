@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import ServiceWorkerRegistration from '../components/ServiceWorkerRegistration'
-import HeaderTop from '../components/HeaderTop'
-import BottomNavigation from '../components/BotoomNavigation'
+import LayoutWrapper from '@/components/Layoutwrapper'
+import AxiosConfig from '@/components/AxiosConfig'
+// import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
   title: 'CharchaManch - Progressive Web App',
@@ -32,14 +33,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
       </head>
       <body className="bg-gray-50">
-        <ServiceWorkerRegistration />
-        <HeaderTop />
-        <div className="min-h-screen flex flex-col">
-          <main className="flex-1 pb-20">
+          <AxiosConfig />
+          <ServiceWorkerRegistration />
+          <LayoutWrapper>
             {children}
-          </main>
-          <BottomNavigation />
-        </div>
+          </LayoutWrapper>
       </body>
     </html>
   )

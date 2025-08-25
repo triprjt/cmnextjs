@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Select from 'react-select';
 import Footer from "@/components/Footer";
-
+import axios from "axios";
 interface constituencyListType {
   _id: number;
   area_name: string;
@@ -95,8 +95,8 @@ export default function Home() {
     setLoadingConstituencyDetailSummary(true);
     try {
       const limit = pageNumber === 1 ? 2 : 3; // First page: 2, others: 3
-      const response = await fetch(`${backendUrl}/api/constituencies/list/paginated?page=${pageNumber}&limit=${limit}`);
-      const data = await response.json();
+      const response = await axios.get(`/api/constituencies/list/paginated?page=${pageNumber}&limit=${limit}`);
+      const data = response.data;
 
       if (pageNumber === 1) {
         // First page: replace the list
@@ -118,14 +118,14 @@ export default function Home() {
       setLoadingConstituencyDetailSummary(false);
     }
   }, [backendUrl]);
-  console.log('loading ', loading);
+
   useEffect(() => {
     const fetchConstituencyAreaList = async () => {
       setLoading(true);
 
       try {
-        const response = await fetch(`${backendUrl}/api/constituencies`);
-        const data = await response.json();
+        const response = await axios.get(`/api/constituencies`);
+        const data = response.data;
         setConstituencyAreaList(data);
       } catch (err) {
         // setError('Failed to load constituencies');
@@ -144,18 +144,12 @@ export default function Home() {
         ...prev,
         [constituencyAreaName]: poll_response as 'yes' | 'no'
       }));
-      const response = await fetch(`${backendUrl}/api/constituencies/poll/${constituencyAreaName}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',  // Add this header
-        },
-        body: JSON.stringify({
+      const response = await axios.post(`/api/constituencies/poll/${constituencyAreaName}`, {
           poll_response: poll_response,
           poll_category: poll_category,
           question_id: question_id
-        })
-      })
-      const data = await response.json();
+      });
+      const data = response.data;
     }
     catch (err) {
       console.error('Failed to submit poll:', err);
@@ -172,9 +166,9 @@ export default function Home() {
     try {
       const backendUrl = process.env.NEXT_PUBLIC_API_URL;
       // Fetch constituency info first
-      const response = await fetch(`${backendUrl}/api/constituencies/${encodeURIComponent(constituency.area_name)}`);
+      const response = await axios.get(`/api/constituencies/${encodeURIComponent(constituency.area_name)}`);
 
-      const data = await response.json();
+      const data = response.data;
       console.log('Selected constituency:', constituency.area_name);
       console.log('Fetched data:', data);
 

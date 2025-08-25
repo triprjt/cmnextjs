@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import Select from 'react-select';
 import { components } from 'react-select';
+import axios from "axios";
 // Helper function to format date
 const timeAgo = (dateString: string) => {
   const now = new Date();
@@ -62,11 +63,8 @@ export default function MessagePage() {
     const fetchConstituencyAreaList = async () => {
       setLoadingConstituencies(true);
       try {
-        const response = await fetch(`${backendUrl}/api/constituencies`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: ConstituencyListType[] = await response.json();
+        const response = await axios.get(`/api/constituencies`);
+        const data: ConstituencyListType[] = response.data;
         setConstituencyAreaList(data);
       } catch (err: any) {
         setErrorConstituencies(`निर्वाचन क्षेत्रों को लोड करने में विफल: ${err.message}`);
@@ -92,19 +90,16 @@ export default function MessagePage() {
     if (page === 1) { setLoadingPosts(true); }
     setErrorPosts(null);
 
-    let url = `${backendUrl}/api/posts?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`;
+    let url = `/api/posts?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`;
     if (selectedConstituency) {
-      url = `${backendUrl}/api/posts/constituency/${selectedConstituency.value}?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`;
+      url = `/api/posts/constituency/${selectedConstituency.value}?page=${page}&limit=${limit}&sortBy=createdAt&sortOrder=desc`;
     }
     if (page !== 1) {
       setSeemorePostsLoading(true);
     }
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result: PostsResponse = await response.json();
+      const response = await axios.get(url);
+      const result: PostsResponse = response.data;
       if (page === 1) {
         setPosts(result.data.posts);
       } else {
@@ -132,8 +127,6 @@ export default function MessagePage() {
   const handleCommentSubmit = async (postId: string) => {
     const commentText = commentInputs.get(postId)?.trim();
     if (!commentText) return; // Don't submit empty comments
-
-    console.log(`Submitting comment "${commentText}" for post ${postId}`);
     // Implement API call to submit comment here
     try {
       setLoadingCommentInput(prev => {
@@ -141,22 +134,12 @@ export default function MessagePage() {
         newState.set(postId, true);
         return newState;
       });
-      const response = await fetch(`${backendUrl}/api/comments/${postId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user: "68a733a6ea0064119890ac1d",
-          content: commentText,
-        }),
+      const response = await axios.post(`/api/comments/${postId}`, {
+        user: "68a733a6ea0064119890ac1d",
+        content: commentText,
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       // Parse the API response
-      const responseData = await response.json();
+      const responseData = response.data;
       console.log("responseData", responseData);
       const newComment: CommentType = {
         _id: responseData.comment._id,

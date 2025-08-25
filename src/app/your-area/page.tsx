@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import Footer from "@/components/Footer";
 import { useEffect, useState, Suspense } from "react";
 import Select from 'react-select';
+import axios from 'axios';
 
 interface ConstituencyInfoType {
   area_name: string;
@@ -86,8 +87,8 @@ function YourAreaPageContent() {
       setLoading(true);
 
       try {
-        const response = await fetch(`${backendUrl}/api/constituencies`);
-        const data = await response.json();
+        const response = await axios.get(`/api/constituencies`);
+        const data = response.data;
         setConstituencyAreaList(data);
       } catch (err) {
         setError('Failed to load constituencies');
@@ -100,15 +101,6 @@ function YourAreaPageContent() {
   }, [backendUrl])
 
   const [error, setError] = useState<string | null>(null);
-  const partyIconMap = {
-    'BJP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
-    'INC': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
-    'Congress': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
-    'AAP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
-    'SP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
-    'BSP': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage1.png',
-    'JDU': 'https://blog-meme.blr1.digitaloceanspaces.com/charchamanchpartyimage2.png',
-  }
 
   const handleConstituencySelect = async (constituency: constituencyListType) => {
     setSelectedConstituency(constituency);
@@ -121,8 +113,8 @@ function YourAreaPageContent() {
         setLoading(true);
         try {
 
-          const response = await fetch(`${backendUrl}/api/constituencies/${constituency}`);
-          setConstituencyInfo(await response.json());
+          const response = await axios.get(`/api/constituencies/${constituency}`);
+          setConstituencyInfo(response.data);
         } catch (err) {
           setError('Failed to fetch constituency information');
         } finally {
@@ -225,19 +217,14 @@ function YourAreaPageContent() {
         ...prev,
         [constituencyAreaName]: poll_response as 'yes' | 'no'
       }));
-      const response = await fetch(`${backendUrl}/api/constituencies/poll/${constituencyAreaName}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',  // Add this header
-        },
-        body: JSON.stringify({
+      const response = await axios.post(`/api/constituencies/poll/${constituencyAreaName}`, {
           poll_response: poll_response,
           poll_category: poll_category,
           question_id: question_id,
           dept_id: dept_id
-        })
-      })
-      const data = await response.json();
+      });
+      const data = response.data;
+      console.log('Poll submitted successfully', data);
     }
     catch (err) {
       console.error('Failed to submit poll:', err);
@@ -252,26 +239,19 @@ function YourAreaPageContent() {
       [deptId]: rating
     }));
     try {
-      const response = await fetch(`${backendUrl}/api/constituencies/poll/${constituency}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          poll_response: rating.toString(),
-          poll_category: 'dept',
-          question_id: 0,
-          dept_id: deptId
-        })
+      const response = await axios.post(`/api/constituencies/poll/${constituency}`, {
+        poll_response: rating.toString(),
+        poll_category: 'dept',
+        question_id: 0,
+        dept_id: deptId
       });
-
-      const data = await response.json();
-      console.log('Star rating poll submitted successfully');
+      const data = response.data;
+      console.log('Star rating poll submitted successfully', data);
     } catch (err) {
       console.error('Failed to submit star rating poll:', err);
     }
   };
-  console.log(constituency);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">

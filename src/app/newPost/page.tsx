@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Select from 'react-select';
-
+import axios from 'axios';
 interface ConstituencyListType {
     _id: string;
     area_name: string;
@@ -32,11 +32,9 @@ const NewPostPage = () => {
         const fetchConstituencyAreaList = async () => {
             setLoadingConstituencies(true);
             try {
-                const response = await fetch(`${backendUrl}/api/constituencies`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data: ConstituencyListType[] = await response.json();
+                const response = await axios.get(`/api/constituencies`);
+                
+                const data: ConstituencyListType[] = response.data;
                 setConstituencyAreaList(data);
             } catch (err) {
                 console.error('Failed to fetch constituencies:', err);
@@ -47,11 +45,13 @@ const NewPostPage = () => {
         };
         const fetchDiscussionCategories = async () => {
             try {
-                const response = await fetch(`${backendUrl}/api/categories`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data: { data: { categories: { _id: string; name: string, createdAt: string, __v: number }[] } } = await response.json();
+                // const response = await fetch(`${backendUrl}/api/categories`);
+                const response = await axios.get(`/api/categories`)
+                console.log('response', response)
+                // if (!response.ok) {
+                //     throw new Error(`HTTP error! status: ${response.status}`);
+                // }
+                const data: { data: { categories: { _id: string; name: string, createdAt: string, __v: number }[] } } = response.data;
                 console.log("discussion categories data", data);
                 setDiscussionCategories(data?.data?.categories);
             }
@@ -62,7 +62,6 @@ const NewPostPage = () => {
             finally{
                 setLoadingCategories(false);
             }
-        
         };
         fetchConstituencyAreaList();
         fetchDiscussionCategories();
@@ -102,20 +101,8 @@ const NewPostPage = () => {
 
             console.log('Submitting post:', postData);
 
-            const response = await fetch(`${backendUrl}/api/posts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(postData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Post created successfully:', result);
+            const response = await axios.post(`${backendUrl}/api/posts`, postData);
+            console.log('Post created successfully:', response);
             
             // Show success message or navigate away
             alert('चर्चा सफलतापूर्वक शुरू की गई!');

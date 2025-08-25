@@ -9,6 +9,7 @@ import { PostDetailsResponse, PostsResponse, PostType } from '@/types/post'
 import { CardComponentForPost } from '@/components/cards/cardComponentForPost'
 import { CommentReplyType, CommentType, ReplyDetailsResponse } from '@/types/post'
 import { LoadingSpinner } from '@/components/Loadingspinner'
+import axios from 'axios'
 
 /* ---------- component ---------- */
 export default function PostDetailPage() {
@@ -33,22 +34,11 @@ export default function PostDetailPage() {
             const actualPostId = decodedPostId.split('=')[1] || decodedPostId;  // Extracts '68aacbb57e381985ec9c607e' from 'messageId=68aacbb57e381985ec9c607e'
             setLoading(true);
             setError(null);
-            let url = `${backendUrl}/api/posts/${actualPostId}`;
+            let url = `/api/posts/${actualPostId}`;
             console.log('url ', url)
             try {
-                const response = await fetch(url, {
-                    method: 'GET',  // Explicitly match curl's GET
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': '*/*',  // Common in curl/Postman
-                        'User-Agent': 'YourAppName/1.0',  // Add a User-Agent if missing
-                        // Add any auth headers, e.g., 'Authorization': 'Bearer YOUR_TOKEN'
-                    },
-                    mode: 'cors',  // Ensure CORS is handled
-                }); if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result: PostDetailsResponse = await response.json();
+                const response = await axios.get(`/api/posts/${actualPostId}`);
+                const result: PostDetailsResponse = response.data;
                 setPostDetails(result.post);
             } catch (err: any) {
                 console.error('Failed to fetch posts:', err);
@@ -63,17 +53,15 @@ export default function PostDetailPage() {
     const renderReplies = (replies: string[], commentId: string) => {
         const fetchReplyDetails = async (replyId: string) => {
             try {
-                const url = `${backendUrl}/api/comments/${replyId}`;
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const result: ReplyDetailsResponse = await response.json();
+                const url = `/api/comments/${replyId}`;
+                const response = await axios.get(url);
+                const result: ReplyDetailsResponse = response.data;
                 setReplyInputs(prev => prev.set(commentId, result.comment.content));
                 return result;
             }
-            catch (err) {
-
+            catch (err: any) {
+                console.error('Failed to fetch replies:', err); 
+                setError(`टिप्पणियों को लोड करने में विफल: ${err?.message}`);
             }
         };
 
@@ -118,22 +106,12 @@ export default function PostDetailPage() {
         // Implement API call to submit comment here
         try {
             setLoadingCommentButton(true);
-            const response = await fetch(`${backendUrl}/api/comments/${postId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    user: "68a733a6ea0064119890ac1d",
-                    content: commentText,
-                }),
+            const response = await axios.post(`/api/comments/${postId}`, {
+                user: "68a733a6ea0064119890ac1d",
+                content: commentText,
             });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
             // Parse the API response
-            const responseData = await response.json();
+            const responseData = response.data;
             console.log("responseData", responseData);
             const newComment: CommentType = {
                 _id: responseData.comment._id,
@@ -192,15 +170,15 @@ export default function PostDetailPage() {
                     ) : (
 
                         <div key={postDetails._id} className="bg-[#f6f6f6] rounded-lg shadow-sm p-4">
-                                {/* Post Header */}
+                            {/* Post Header */}
                             <CardComponentForPost post={postDetails as PostType} />
 
                             {/* Post Content */}
                             {/* <h3 className="text-lg font-bold text-[#273F4F] mb-2">{post.title}</h3> */}
                             {/* <p className="text-sm text-gray-700 mb-3">{post.description}</p> */}
-                            {postDetails.content && <p 
-                                    className="mb-3 px-2 postsection-post-content-text"
-                                    style={{
+                            {postDetails.content && <p
+                                className="mb-3 px-2 postsection-post-content-text"
+                                style={{
                                     fontFamily: 'Noto Sans Devanagari, sans-serif',
                                     fontWeight: 400,
                                     fontSize: '1rem',
@@ -209,7 +187,7 @@ export default function PostDetailPage() {
                                     verticalAlign: 'middle',
                                     color: '#1D2530',
                                     textAlign: 'justify'
-                                    }}
+                                }}
                             >{postDetails.content}</p>}
                             {/* Tags */}
                             {postDetails.tags && postDetails.tags.length > 0 && (
@@ -288,7 +266,7 @@ export default function PostDetailPage() {
                                                             <span className="postsection-constituency-area-text">• नई दिल्ली</span>
                                                             <span className="postsection-constituency-area-text">• {timeAgo(comment.createdAt)}</span>
                                                         </div>
-                                                        <p 
+                                                        <p
                                                             className="postsection-comment-content-text mb-1"
                                                             style={{
                                                                 overflowWrap: 'break-word',
@@ -323,7 +301,7 @@ export default function PostDetailPage() {
                                     </div>
                                 )}
                             </div>
-                        
+
                         </div>
 
                     )}
