@@ -130,7 +130,7 @@ const NewPostPage = () => {
     const customSelectStyles = {
         control: (provided: any) => ({
             ...provided,
-            backgroundColor: '#f3f4f6', // Light gray background for input
+            backgroundColor: '#F8FAFB', // Light gray background for input
             border: '1px solid #d1d5db', // Light border
             borderRadius: '0.375rem', // Rounded corners
             padding: '0.25rem', // Padding inside
@@ -165,7 +165,7 @@ const NewPostPage = () => {
 
     return (
         <div className="min-h-[90vh] bg-[#F6F6F6] flex flex-col items-center py-6 px-4">
-            <button onClick={handleClose} className="absolute top-20 right-1 text-gray-400 hover:text-gray-700 z-10">
+            <button onClick={handleClose} className="absolute top-20 right-4 text-gray-400 hover:text-gray-700 z-10">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -178,23 +178,41 @@ const NewPostPage = () => {
                 {/* Post Type Toggle */}
                 <div className="flex bg-gray-100 rounded-lg p-1 mb-6 w-full w-full mx-auto gap-2 ">
                     <button
-                        className={`flex-1 py-1 px-1 rounded-md max-w-[70px] text-sm font-medium ${postType === 'text' ? 'bg-[#273F4F] text-white' : 'text-gray-700 bg-white'}`}
+                        className={`flex-1 py-1 px-1 rounded-md max-w-[70px] text-base ${postType === 'text' ? 'bg-[#273F4F] text-white font-bold' : 'text-gray-700 bg-white font-medium'}`}
                         onClick={() => setPostType('text')}
                     >
-                        A टेक्स्ट
+                        <img 
+                            src="/text.svg" 
+                            className={`w-3.5 h-3.5 mr-1 inline-block ${postType === 'text' ? 'brightness-0 invert' : 'brightness-0'}`}
+                            alt="text icon"
+                        />टेक्स्ट
                     </button>
-                    <button
-                        className={`flex-1 py-1 px-1 rounded-md max-w-[70px] text-sm font-medium ${postType === 'poll' ? 'bg-[#273F4F] text-white' : 'text-gray-700 bg-white'}`}
+                    {/* <button
+                        className={`flex-1 py-1 px-1 rounded-md max-w-[70px] text-base ${postType === 'poll' ? 'bg-[#273F4F] text-white font-bold' : 'text-gray-700 bg-white font-medium'}`}
                         onClick={() => setPostType('poll')}
                     >
-                        <span className="inline-block mr-1">📊</span> पोल
-                    </button>
+                        <img 
+                            src="/poll.svg" 
+                            className={`w-4 h-4 mr-1 inline-block ${postType === 'poll' ? 'brightness-0 invert' : 'brightness-0'}`}
+                            alt="poll icon"
+                        />पोल
+                    </button> */}
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Constituency Dropdown */}
                     <div>
-                        <label htmlFor="constituency-select" className="block text-sm font-medium text-[#273F4F] mb-1">
+                        <label 
+                            htmlFor="constituency-select" 
+                            className="block mb-3 px-1"
+                            style={{
+                                fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                lineHeight: '1',
+                                letterSpacing: '0%',
+                                color: '#1D2530'
+                            }}>
                             विधानसभा क्षेत्र
                         </label>
                         {loadingConstituencies ? (
@@ -223,7 +241,17 @@ const NewPostPage = () => {
 
                     {/* Discussion Category Dropdown */}
                     <div>
-                        <label htmlFor="category-select" className="block text-sm font-medium text-[#273F4F] mb-1">
+                        <label 
+                            htmlFor="category-select" 
+                            className="block mb-3 px-1"
+                            style={{
+                                fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                lineHeight: '1',
+                                letterSpacing: '0%',
+                                color: '#1D2530'
+                            }}>
                             चर्चा श्रेणी
                         </label>
                         <Select
@@ -243,12 +271,22 @@ const NewPostPage = () => {
 
                     {/* Discussion Text Area */}
                     <div>
-                        <label htmlFor="discussion-text" className="block text-sm font-medium text-[#273F4F] mb-1">
+                        <label 
+                            htmlFor="discussion-text" 
+                            className="block mb-3 px-1"
+                            style={{
+                                fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                lineHeight: '1',
+                                letterSpacing: '0%',
+                                color: '#1D2530'
+                            }}>
                             चर्चा का टेक्स्ट
                         </label>
                         <textarea
                             id="discussion-text"
-                            className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#273F4F] focus:border-[#273F4F] text-gray-800 text-sm"
+                            className="w-full p-3 border border-gray-300 rounded-md bg-[#F8FAFB] focus:ring-[#273F4F] focus:border-[#273F4F] text-gray-800 text-sm"
                             rows={4}
                             placeholder="अपनी बात साझा करें ..."
                             value={postContent}
@@ -258,18 +296,28 @@ const NewPostPage = () => {
 
                     {/* Tags Input (Optional) */}
                     <div>
-                        <label htmlFor="tags-input" className="block text-sm font-medium text-[#273F4F] mb-1">
+                        <label 
+                            htmlFor="tags-input" 
+                            className="block mb-3 px-1"
+                            style={{
+                                fontFamily: 'Noto Sans Devanagari, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                lineHeight: '1',
+                                letterSpacing: '0%',
+                                color: '#1D2530'
+                            }}>
                             टैग्स (वैकल्पिक)
                         </label>
                         <input
                             type="text"
                             id="tags-input"
-                            className="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#273F4F] focus:border-[#273F4F] text-gray-800 text-sm"
+                            className="w-full p-3 border border-gray-300 rounded-md bg-[#F8FAFB] focus:ring-[#273F4F] focus:border-[#273F4F] text-gray-800 text-sm"
                             placeholder="टैग्स को कॉमा से अलग करें"
                             value={tags}
                             onChange={(e) => setTags(e.target.value)}
                         />
-                        <p className="text-xs text-gray-500 mt-1">उदाहरण: शिक्षा, स्वास्थ्य, रोजगार</p>
+                        <p className="text-xs text-gray-500 mt-2 px-1">उदाहरण: शिक्षा, स्वास्थ्य, रोजगार</p>
                     </div>
 
                     {/* Action Buttons */}
@@ -277,7 +325,7 @@ const NewPostPage = () => {
                         <button
                             type="button"
                             onClick={handleCancel}
-                            className="px-6 py-2 border border-gray-300 rounded-md text-[#273F4F] font-medium bg-white hover:bg-gray-50 transition-colors"
+                            className="px-10 py-2 border border-gray-300 rounded-md text-[#273F4F] font-medium bg-white hover:bg-gray-50 transition-colors"
                         >
                             रद्द करें
                         </button>
