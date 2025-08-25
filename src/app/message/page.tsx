@@ -258,34 +258,51 @@ export default function MessagePage() {
         <main className="px-4 py-2.5">
         <div className="space-y-2.5">
           {/* Charcha Manch Banner */}
-          <div className="bg-[#f6f6f6] rounded-lg shadow-sm p-1 text-center mb-2.5">
-            <p 
-              className="text-4xl tracking-[0%] text-center flex items-center justify-center gap-2 text-[#004030] pt-1"
-              style={{
-                fontFamily: 'Noto Sans Devanagari, sans-serif',
-                fontWeight: 800,
-                lineHeight: '1.42',
-              }}
-            >
-              <span>चर्चा</span><span 
-                className="text-[#DC3C22] inline-flex"
+          <div className="bg-[#273F4F] rounded-lg shadow-sm text-center mb-2.5 relative overflow-hidden">
+            {/* Left side image */}
+            <img 
+              src="/flyer-charcha-mach-your-area/charcha-manch-flyer-left.PNG" 
+              alt="Charcha Manch Left Flyer" 
+              className="absolute -left-5 -top-12 h-[180%] w-auto object-contain opacity-100"
+            />
+            
+            {/* Right side image */}
+            <img 
+              src="/flyer-charcha-mach-your-area/charcha-manch-flyer-right.PNG" 
+              alt="Charcha Manch Right Flyer" 
+              className="absolute -right-5 -top-12 h-[180%] w-auto object-contain opacity-100"
+            />
+            
+            {/* Content - with higher z-index to appear above images */}
+            <div className="relative z-10">
+              <p 
+                className="text-4xl tracking-[0%] text-center flex items-center justify-center gap-2 text-[#ffffff] pt-8"
                 style={{
                   fontFamily: 'Noto Sans Devanagari, sans-serif',
                   fontWeight: 800,
+                  lineHeight: '1.42',
                 }}
-              >मंच</span>
-            </p>
-            <p 
-              className="pt-0 text-base mb-1"
-              style={{
-                fontFamily: 'Noto Sans Devanagari, sans-serif',
-                fontWeight: 600,
-                lineHeight: '1.425', // 22.75px/14px = 1.425
-                letterSpacing: '0%',
-                verticalAlign: 'middle',
-                color: '#7B899D'
-              }}
-            >संवाद और सामुदायिक सहयोग का मंच</p>
+              >
+                <span>चर्चा</span><span 
+                  className="text-[#DC3C22] inline-flex"
+                  style={{
+                    fontFamily: 'Noto Sans Devanagari, sans-serif',
+                    fontWeight: 800,
+                  }}
+                >मंच</span>
+              </p>
+              <p 
+                className="pt-0 text-base mb-6"
+                style={{
+                  fontFamily: 'Noto Sans Devanagari, sans-serif',
+                  fontWeight: 600,
+                  lineHeight: '1.425', // 22.75px/14px = 1.425
+                  letterSpacing: '0%',
+                  verticalAlign: 'middle',
+                  color: '#a4abb6ff'
+                }}
+              >संवाद और सामुदायिक सहयोग का मंच</p>
+            </div>
           </div>
 
           {/* Constituency Filter */}
