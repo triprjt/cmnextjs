@@ -135,83 +135,109 @@ function YourAreaPageContent() {
 
   if (!constituency) {
     return (
-      <div className="h-[90vh] bg-[#c1cbd1] flex flex-col items-center my-auto align-middle justify-center">
-        <div className="mb-8 max-w-md mx-auto">
-          <Select
-            placeholder="अपना निर्वाचन क्षेत्र खोजें..."
-            value={selectedConstituency ? {
-              value: selectedConstituency._id,
-              label: selectedConstituency.area_name
-            } : null}
-            onChange={(option) => {
-              if (option) {
-                const constituency = constituencyAreaList.find(c => c._id === option.value);
-                console.log('constituency123 ', constituency, 'option123 ', option);
-                if (constituency) {
-                  handleConstituencySelect(constituency);
-                }
-              }
-            }}
-            onMenuClose={() => {
-              setSelectedConstituency(null);
-            }}
-            onMenuOpen={() => {
-              setSelectedConstituency(null);
-            }}
-            options={constituencyAreaList.map(constituency => ({
-              value: constituency._id,
-              label: constituency.area_name
-            }))}
-            isSearchable={true}
-            isClearable={true}
-            className="text-gray-800"
-            instanceId="constituency-select"
-            styles={{
-              control: (provided) => ({
-                ...provided,
-                backgroundColor: '#e5e7eb',
-                border: 'none',
-                borderRadius: '0.5rem',
-                padding: '0.75rem',
-                minHeight: 'auto'
-              }),
-              placeholder: (provided) => ({
-                ...provided,
-                color: '#6b7280'
-              }),
-              input: (provided) => ({
-                ...provided,
-                color: '#1f2937'
-              }),
-              option: (provided, state) => ({
-                ...provided,
-                backgroundColor: state.isSelected ? '#273F4F' : state.isFocused ? '#f3f4f6' : 'white',
-                color: state.isSelected ? 'white' : '#1f2937',
-                '&:hover': {
-                  backgroundColor: state.isSelected ? '#273F4F' : '#f3f4f6'
-                }
-              }),
-              menu: (provided) => ({
-                ...provided,
-                zIndex: 50
-              })
-            }}
+      <div className="bg-[#c1cbd1]">
+        {/* Header Container - Full Width */}
+        <div className="bg-[#273F4F] shadow-sm border-b border-gray-200 text-center relative overflow-hidden">
+          {/* Background PNG Image */}
+          <img 
+            src="/flyer-charcha-mach-your-area/aapke-shetra-flyer.PNG" 
+            alt="Aapke Shetra Flyer" 
+            className="absolute -top-6 left-0 right-0 w-[150%] h-[210%] object-cover opacity-100"
           />
-        </div>
-        <div className="bg-[#f6f6f6] rounded-lg shadow-sm border border-gray-200 p-8 text-center max-w-md mx-4">
-          <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-            </svg>
+          
+          {/* Content with higher z-index */}
+          <div className="relative z-10 pt-8 pb-12">
+            <p className="aapke-kshetra-ki"
+              style={{
+                fontWeight: 600,
+                fontSize: '1.5rem',
+                letterSpacing: '0' }}
+              >
+              <span style={{ color: '#a4abb6ff' }}>आपके क्षेत्र की</span><br />
+              <span style={{ color: '#DC3C22' }}>जानकारी</span>
+            </p>
           </div>
-          <h2 className="text-xl font-semibold text-[#273F4F] mb-2">कृपया निर्वाचन क्षेत्र चुनें</h2>
-          <p className="text-gray-600 mb-4">देखने के लिए किसी निर्वाचन क्षेत्र का चयन करें</p>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-[#273F4F] text-white px-6 py-2 rounded-lg hover:bg-[#1e2f3a] transition-colors"
-          >
-            होम पेज पर जाएं
-          </button>
+        </div>
+        
+        {/* Content Section - Centered */}
+        <div className="flex flex-col items-center justify-center px-4 py-6">
+          <div className="mb-6 max-w-md mx-auto w-full">
+            <Select
+              placeholder="अपना निर्वाचन क्षेत्र खोजें..."
+              value={selectedConstituency ? {
+                value: selectedConstituency._id,
+                label: selectedConstituency.area_name
+              } : null}
+              onChange={(option) => {
+                if (option) {
+                  const constituency = constituencyAreaList.find(c => c._id === option.value);
+                  console.log('constituency123 ', constituency, 'option123 ', option);
+                  if (constituency) {
+                    handleConstituencySelect(constituency);
+                  }
+                }
+              }}
+              onMenuClose={() => {
+                setSelectedConstituency(null);
+              }}
+              onMenuOpen={() => {
+                setSelectedConstituency(null);
+              }}
+              options={constituencyAreaList.map(constituency => ({
+                value: constituency._id,
+                label: constituency.area_name
+              }))}
+              isSearchable={true}
+              isClearable={true}
+              className="text-gray-800"
+              instanceId="constituency-select"
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  backgroundColor: '#e5e7eb',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem',
+                  minHeight: 'auto'
+                }),
+                placeholder: (provided) => ({
+                  ...provided,
+                  color: '#6b7280'
+                }),
+                input: (provided) => ({
+                  ...provided,
+                  color: '#1f2937'
+                }),
+                option: (provided, state) => ({
+                  ...provided,
+                  backgroundColor: state.isSelected ? '#273F4F' : state.isFocused ? '#f3f4f6' : 'white',
+                  color: state.isSelected ? 'white' : '#1f2937',
+                  '&:hover': {
+                    backgroundColor: state.isSelected ? '#273F4F' : '#f3f4f6'
+                  }
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  zIndex: 50
+                })
+              }}
+            />
+          </div>
+          <div className="bg-[#f6f6f6] rounded-lg shadow-sm border border-gray-200 p-8 text-center max-w-md mx-4 mb-2">
+            <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-[#273F4F] mb-2">कृपया निर्वाचन क्षेत्र चुनें</h2>
+            <p className="text-gray-600 mb-4">देखने के लिए किसी निर्वाचन क्षेत्र का चयन करें</p>
+            <button
+              onClick={() => router.push('/')}
+              className="bg-[#273F4F] text-white px-6 py-2 rounded-lg hover:bg-[#1e2f3a] transition-colors"
+            >
+              होम पेज पर जाएं
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -375,9 +401,31 @@ function YourAreaPageContent() {
             />
           </div>
           {/* Constituency Information */}
-          <div className="bg-[#f6f6f6] rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-            <p className=" mb-2 candidate-profile-main-heading-area-name">{constituencyInfo?.area_name}</p>
-            <p className="text-gray-600">आपके क्षेत्र की जानकारी</p>
+          <div className="bg-[#273F4F] rounded-lg shadow-sm border border-gray-200 text-center relative overflow-hidden">
+            {/* Background PNG Image */}
+            <img 
+              src="/flyer-charcha-mach-your-area/aapke-shetra-flyer.PNG" 
+              alt="Aapke Shetra Flyer" 
+              className="absolute -top-12 left-0 right-0 w-full h-[250%] object-cover opacity-100"
+            />
+            
+            {/* Content with higher z-index */}
+            <div className="relative z-10 pt-6 pb-12">
+              <p className=" mb-2 candidate-profile-main-heading-area-name" 
+                style={{fontFamily: 'Noto Sans Devanagari, sans-serif', 
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  letterSpacing: '0' }}
+                >{constituencyInfo?.area_name}</p>
+              <p className="aapke-kshetra-ki"
+                style={{
+                  fontWeight: 600,
+                  letterSpacing: '0' }}
+                >
+                <span style={{ color: '#a4abb6ff' }}>आपके क्षेत्र की </span>
+                <span style={{ color: '#DC3C22' }}>जानकारी</span>
+              </p>
+            </div>
           </div>
 
           <div className="relative flex flex-col bg-[#f6f6f6] rounded-lg shadow-sm border border-gray-200 p-6 items-start space-x-3">
