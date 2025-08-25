@@ -7,12 +7,13 @@ export default function BottomNavigation() {
   const pathname = usePathname();
 
   const getSelectedNav = () => {
-    if (pathname === '/') return 'home';
-    if (pathname === '/message') return 'message';
+    if (pathname === '/' ) return 'home';
+    if (pathname.startsWith('/message') ) return 'message';
+    if (pathname === '/newPost' ) return 'message';
     if (pathname === '/your-area') return 'your-area';
     return 'home';
   };
-
+  console.log('getSelectedNav() ', getSelectedNav());
   const selectedNav = getSelectedNav();
 
   return (
