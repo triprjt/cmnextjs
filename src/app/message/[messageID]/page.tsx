@@ -177,7 +177,7 @@ export default function PostDetailPage() {
         setCommentInputs(event.target.value);
     };
     return (
-        <div className="min-h-screen bg-[#939cab] pb-20 mb-3"> {/* pb-20 for fixed nav bar */}
+        <div className="min-h-screen bg-[#c1cbd1] pb-20 mb-3"> {/* pb-20 for fixed nav bar */}
             <main className="p-4">
                 {/* Charcha Manch Banner */}
                 <div className="bg-[#f6f6f6] rounded-lg shadow-sm p-2 text-center mb-4">
